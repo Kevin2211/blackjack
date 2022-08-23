@@ -17,7 +17,7 @@ let playerHandArr = [];
 let dealerHandArr = [];
 
 
-
+//Function that makes a card with rank and suit as paramaters
 const makeDeck = (rank, suit) => {
   const card = {
     rank: rank,
@@ -26,6 +26,8 @@ const makeDeck = (rank, suit) => {
   };
   deck.push(card);
 };
+
+//when called, this function will generate a deck with 52 cards
 function deckGenerator(){
   deck = [];
   for (let suit of suits) {
@@ -39,13 +41,16 @@ window.addEventListener("DOMContentLoaded", () => {
   deckGenerator();
 });
 
+
+//returns a random card with the deck
 function getRandomCard (){
   const randomNum = Math.floor(Math.random() * (deck.length));
   const card = deck[randomNum]
   return card;
 }
 
-function addCardToPlayerDeck (card){
+//adds a card to the player's hand, and remove that card from the deck
+function addCardToPlayerHand (card){
   let rank = card.rank;
   const suit = card.suit;
   const newImgTag = document.createElement('img');
@@ -55,8 +60,8 @@ function addCardToPlayerDeck (card){
   deck.pop(card);
 
 }
-
-function addCardToDealerDeck (card){
+//adds a card to the dealer's hand, and remove that card from the deck
+function addCardToDealerHand (card){
   let rank = card.rank;
   const suit = card.suit;
   const newImgTag = document.createElement('img');
@@ -70,6 +75,7 @@ function addCardToDealerDeck (card){
   // }
 }
 
+//When called, this function will return a total value in the player's/dealer's hand
 function updatePoints (cardArr, points){
   totalPoints = 0;
   cardArr.forEach(card => {
@@ -86,12 +92,11 @@ function updatePoints (cardArr, points){
       totalPoints += 10;
     } 
   });
-
   return totalPoints;
-  
 }
 
 dealButton.addEventListener('click', (e) => {
+  //If the game is ended, this will reset the deck and make a new game
   while(deck.length < 52 && isGameOn == false){
     deckGenerator();
     playerPoints = 0;
@@ -102,12 +107,13 @@ dealButton.addEventListener('click', (e) => {
     playerHand.innerHTML = '';
     console.log(deck.length);
   }
+  //adds 2 cards to each player's hand
   if(isGameOn == false){
     isGameOn = true;
-    addCardToPlayerDeck(getRandomCard());
-    addCardToPlayerDeck(getRandomCard());
-    addCardToDealerDeck (getRandomCard());
-    addCardToDealerDeck (getRandomCard());
+    addCardToPlayerHand(getRandomCard());
+    addCardToPlayerHand(getRandomCard());
+    addCardToDealerHand (getRandomCard());
+    addCardToDealerHand (getRandomCard());
     dealerPoints = updatePoints(dealerHandArr);
     playerPoints = updatePoints(playerHandArr);
     if(dealerPoints == 21 && playerPoints ==21){
@@ -131,7 +137,7 @@ dealButton.addEventListener('click', (e) => {
 
 hitButton.addEventListener('click', (e) => {
   if(playerHandArr.length != 0 && isGameOn == true){
-    addCardToPlayerDeck(getRandomCard());
+    addCardToPlayerHand(getRandomCard());
     playerPoints = updatePoints(playerHandArr, playerPoints);
     playerPoints = updatePoints(playerHandArr, playerPoints);
     if(playerPoints > 21){
@@ -152,7 +158,7 @@ standButton.addEventListener('click', (e) => {
       messageBox.textContent = "Your hand value is less than 16, you must 'hit'! "
     }else if (isGameOn == true){
       while(dealerPoints < 16 || dealerPoints < playerPoints){
-        addCardToDealerDeck(getRandomCard());
+        addCardToDealerHand(getRandomCard());
         dealerPoints = updatePoints(dealerHandArr, dealerPoints);
         dealerPoints = updatePoints(dealerHandArr, dealerPoints);
       }
