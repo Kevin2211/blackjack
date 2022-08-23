@@ -37,7 +37,6 @@ function deckGenerator(){
 
 window.addEventListener("DOMContentLoaded", () => {
   deckGenerator();
-  console.log(deck);
 });
 
 function getRandomCard (){
@@ -55,8 +54,8 @@ function addCardToPlayerDeck (card){
   playerHandArr.push(card);
   deck.pop(card);
 
-
 }
+
 function addCardToDealerDeck (card){
   let rank = card.rank;
   const suit = card.suit;
@@ -66,20 +65,30 @@ function addCardToDealerDeck (card){
   dealerHandArr.push(card);
   deck.pop(card);
 
+  // if(dealerHandArr.length >= 3){
+  //   dealerHand.firstElementChild.src = `images/${dealerHandArr[0].rank}_of_${dealerHandArr[0].suit}.png`
+  // }
 }
 
-function updatePoints (cardArr){
+function updatePoints (cardArr, points){
   totalPoints = 0;
   cardArr.forEach(card => {
     if(card.pointValue < 10){
       totalPoints += card.pointValue;
-    }else if(card.pointValue === 'ace'){
+    }
+    else if(card.pointValue == 'ace' && points > 10){
+      totalPoints += 1;
+    }
+    else if(card.pointValue == 'ace' ){
       totalPoints += 11;
-    }else{
+    }
+    else{
       totalPoints += 10;
     } 
   });
+
   return totalPoints;
+  
 }
 
 dealButton.addEventListener('click', (e) => {
@@ -109,11 +118,12 @@ dealButton.addEventListener('click', (e) => {
       messageBox.textContent = "Black Jack! Dealer Won!";
       isGameOn = false;
 
-    }else if (playerPoints == 21){
+    }
+    else if (playerPoints == 21){
       messageBox.textContent = "Black Jack! You Won!";
       isGameOn = false;
-
-    }else{
+    }
+    else{
       messageBox.textContent = "Your hand value is " + playerPoints + ", Hit or stand?"
     }
   }
@@ -122,7 +132,8 @@ dealButton.addEventListener('click', (e) => {
 hitButton.addEventListener('click', (e) => {
   if(playerHandArr.length != 0 && isGameOn == true){
     addCardToPlayerDeck(getRandomCard());
-    playerPoints = updatePoints(playerHandArr);
+    playerPoints = updatePoints(playerHandArr, playerPoints);
+    playerPoints = updatePoints(playerHandArr, playerPoints);
     if(playerPoints > 21){
       messageBox.textContent = "Your hand value is " + playerPoints + ", You busted!"
       isGameOn = false;
@@ -136,14 +147,14 @@ hitButton.addEventListener('click', (e) => {
 })
 
 
-  standButton.addEventListener('click', (e) => {
-
+standButton.addEventListener('click', (e) => {
     if(playerPoints < 16){
       messageBox.textContent = "Your hand value is less than 16, you must 'hit'! "
     }else if (isGameOn == true){
-      while(dealerPoints < 16){
+      while(dealerPoints < 16 || dealerPoints < playerPoints){
         addCardToDealerDeck(getRandomCard());
-        dealerPoints = updatePoints(dealerHandArr);
+        dealerPoints = updatePoints(dealerHandArr, dealerPoints);
+        dealerPoints = updatePoints(dealerHandArr, dealerPoints);
       }
       if(dealerPoints > playerPoints && dealerPoints <= 21){
         messageBox.textContent = `Your hand value is ${playerPoints}, dealer hand value is ${dealerPoints}, dealer won!`;
@@ -156,9 +167,9 @@ hitButton.addEventListener('click', (e) => {
       }else{
         messageBox.textContent = `Your hand value is ${playerPoints}, dealer hand value is ${dealerPoints}, you won!`;
         isGameOn = false;
-
       }
     }
+    console.log(dealerHand.firstChild.src);
   })
 
 
@@ -166,5 +177,8 @@ hitButton.addEventListener('click', (e) => {
 
 
 
+// //  if(dealerHandArr.length >= 3){
+//   dealerHand.firstElementChild.src = `images/${dealerHandArr[0].rank}_of_${dealerHandArr[0].suit}.png`
+// }
 
 
